@@ -31,16 +31,20 @@ function getCities(event) {
   citySelect.innerHTML = "<option value>Selecione a Cidade</option>"
   citySelect.disabled = true
 
+  citySelect.innerHTML = "<option value=>selecione a cidade</option>",
+  citySelect.innerHTML = true
+
+
   fetch(url)
   .then( res => res.json() )
   .then( cities => {
 
+    for( const city of cities ) {
+        citySelect.innerHTML += `<option value="${city.nome}">${city.nome}</option>`
+    }
 
-      for( const city of cities ) {
-          citySelect.innerHTML += `<option value="${city.id}">${city.nome}</option>`
-      }
+    citySelect.disabled = false
 
-      citySelect.disabled = false
   } )
 }
 
@@ -48,3 +52,51 @@ function getCities(event) {
 document
   .querySelector("select[name=uf]")
   .addEventListener("change", getCities)
+
+
+const itemsToCollect = document.querySelectorAll('.items-grid li')
+
+for( const item of itemsToCollect ) {
+  item.addEventListener("click", handleSelectedItem)
+}
+
+ //atualizar o campo escondido com o item selecionado
+const collectedItems = document.querySelector("input[name=items")
+
+let selectedItems = []
+
+function handleSelectedItem(event) {
+
+  const itemLi = event.target
+
+  itemLi.classList.toggle("selected")
+
+  const itemId = itemLi.dataset.id
+
+  //verificar se existem itens selecionados, se sim
+  //pegar os itens selecionados
+
+  const alreadySelected = selectedItems.findIndex( item => {
+    const itemFound = item == itemId
+    return itemFound
+  })
+
+  //se estiver selecionado tirar da seleção
+  if( alreadySelected >= 0) {
+      // tirar da seleção
+    const filteredItems = selectedItems.filter( item => {
+      const itemIsDiferent = item != itemId
+      return itemIsDiferent
+    })
+
+    selectedItems = filteredItems
+
+  }else {
+
+    //se não estiver selecionado adicionar a seleção
+    selectedItems.push(itemId)
+  }
+
+  //atualizar o campo escondido com o item selecionado
+  collectedItems.value = selectedItems
+}
